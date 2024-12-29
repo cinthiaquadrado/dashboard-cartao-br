@@ -67,8 +67,3 @@ indicadores = [
 # Exibindo indicadores
 for titulo, indicador, unidade in indicadores:
     exibir_indicador(titulo, indicador, unidade)
-
-# Exibir os 5 dados mais recentes
-st.markdown("### Dados Mais Recentes")
-for titulo, indicador, unidade in indicadores:
-    st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-5:].to_list()} {unidade}")
