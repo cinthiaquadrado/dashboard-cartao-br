@@ -38,17 +38,7 @@ def exibir_indicador(titulo, indicador, unidade):
     # Exibe o gráfico do indicador
     st.line_chart(indicador)
     
-    # Verifica se o indicador não está vazio e pega o último valor
-    if not indicador.empty:  # Garante que o indicador não está vazio
-        ultimo_valor = indicador.iloc[-1]  # Acessa o último valor da Series
-        
-        # Verifica se o último valor é NaN
-        if pd.isna(ultimo_valor):
-            st.markdown(f"Último valor: Não disponível ({unidade})")
-        else:
-            st.markdown(f"Último valor: {ultimo_valor:.2f} {unidade}")
-    else:
-        st.markdown(f"Dados não disponíveis para {titulo} ({unidade})")
+    st.line_chart(unidade)
 
 # Layout do dashboard
 st.title("📊 Panorama do Uso de Cartões de Crédito no Brasil")
