@@ -32,37 +32,30 @@ dados = {
 # Layout do dashboard
 st.title("📊 Panorama do Uso de Cartões de Crédito no Brasil")
 
-# Texto explicativo
+# Texto inicial explicativo
 st.markdown("""
     Este dashboard apresenta uma análise sobre o uso de cartões de crédito por pessoas físicas no Brasil, 
     com o objetivo de fornecer informações atualizadas sobre a evolução do crédito rotativo, inadimplência, 
-    as carteiras de crédito e as operações realizadas.
+    as carteiras de crédito e as operações realizadas. Ele permite entender os principais indicadores do mercado de 
+    crédito, auxiliando na análise de tendências e na tomada de decisões estratégicas.
 """)
 
-# Filtro lateral para selecionar o nome da tabela
-tabela_selecionada = st.sidebar.selectbox("Selecione um Indicador", list(dados.keys()))
+# Filtros para interação do usuário
+# Seletor de tabela
+tabela_selecionada = st.selectbox(
+    "Escolha o indicador para visualização",
+    list(dados.keys())
+)
 
-# Filtro de período para gráficos
-data_inicio = st.sidebar.date_input("Data de Início", min_value=dados[tabela_selecionada].index.min(), max_value=dados[tabela_selecionada].index.max(), value=dados[tabela_selecionada].index.min())
-data_fim = st.sidebar.date_input("Data de Fim", min_value=dados[tabela_selecionada].index.min(), max_value=dados[tabela_selecionada].index.max(), value=dados[tabela_selecionada].index.max())
-
-# Função para exibir gráfico e tabela com últimos 5 registros
-def exibir_indicador(titulo, dados, unidade, data_inicio, data_fim):
-    # Filtrando os dados de acordo com o período
-    dados_filtrados = dados[(dados.index >= pd.to_datetime(data_inicio)) & (dados.index <= pd.to_datetime(data_fim))]
-    
+# Função para exibir gráficos e tabelas com unidades e títulos
+def exibir_indicador(titulo, dados, unidade):
     st.subheader(titulo)
     st.markdown(f"**Unidade:** {unidade}")
-    
-    if dados_filtrados.empty:
-        st.warning(f"Não há dados disponíveis para o indicador: {titulo} no período selecionado.")
+    if dados.empty:
+        st.warning(f"Não há dados disponíveis para o indicador: {titulo}")
     else:
-        # Exibir gráfico
-        st.line_chart(dados_filtrados['valor'], height=250, use_container_width=True)
-        
-        # Exibir últimos 5 registros
-        st.markdown("### Últimos 5 Registros")
-        st.write(dados_filtrados.tail(5))
+        st.line_chart(dados['valor'], height=250, use_container_width=True)
+        st.write(dados.head())
 
 # Títulos e Unidades para cada indicador
 indicadores = [
@@ -78,12 +71,13 @@ indicadores = [
     ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
 ]
 
-# Exibir o gráfico e a tabela do indicador selecionado
-indicador_selecionado = dados[tabela_selecionada]
-unidade_selecionada = dict(indicadores)[tabela_selecionada]
+# Exibir o gráfico do indicador selecionado
+for titulo, indicador, unidade in indicadores:
+    if titulo == tabela_selecionada:
+        exibir_indicador(titulo, indicador, unidade)
 
-exibir_indicador(tabela_selecionada, indicador_selecionado, unidade_selecionada, data_inicio, data_fim)
-
-# Exibir dados mais recentes
+# Exibir dados mais atuais (últimos valores)
 st.markdown("### Dados Mais Recentes")
-st.markdown(f"**{tabela_selecionada}**: {indicador_selecionado['valor'].iloc[-1]:.2f} {unidade_selecionada}")
+for titulo, indicador, unidade in indicadores:
+    if titulo == tabela_selecionada:
+        st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-1]:.2f} {unidade}")
