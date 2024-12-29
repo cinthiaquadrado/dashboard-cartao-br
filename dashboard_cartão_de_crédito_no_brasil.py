@@ -39,12 +39,14 @@ def exibir_indicador(titulo, indicador, unidade):
     st.line_chart(indicador)
     
     # Exibe a última linha de dados
-    ultimo_valor = indicador.iloc[-1]
-    
-    if pd.isna(ultimo_valor):
-        st.markdown(f"Último valor: Não disponível ({unidade})")
+    if not indicador.empty:
+        ultimo_valor = indicador.iloc[-1]  # Acessa o último valor da Series
+        if pd.isna(ultimo_valor):
+            st.markdown(f"Último valor: Não disponível ({unidade})")
+        else:
+            st.markdown(f"Último valor: {ultimo_valor:.2f} {unidade}")
     else:
-        st.markdown(f"Último valor: {ultimo_valor:.2f} {unidade}")
+        st.markdown(f"Dados não disponíveis para {titulo} ({unidade})")
 
     
 # Layout do dashboard
