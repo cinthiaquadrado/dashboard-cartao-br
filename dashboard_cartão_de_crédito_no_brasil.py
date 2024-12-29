@@ -17,16 +17,17 @@ def extracao_bcb(codigo, data_inicio, data_fim):
 
 # Extração dos dados
 dados = {
-    "Saldo do Crédito Rotativo": extracao_bcb(20587, '01/03/2007', '28/12/2024'),  # Saldo do crédito rotativo - PF
-    "Taxa de Inadimplência (15 a 90 dias)": extracao_bcb(7912, '30/06/2000', '31/12/2012'),  # Inadimplência (15 a 90 dias)
-    "Taxa de Inadimplência (>90 dias)": extracao_bcb(7934, '30/06/2000', '31/12/2012'),  # Inadimplência (>90 dias)
-    "Saldo da carteira - Cartão de crédito parcelado": extracao_bcb(20588, '01/03/2007', '28/12/2024'),
-    "Saldo da carteira - Cartão de crédito à vista": extracao_bcb(20589, '01/03/2007', '28/12/2024'),
-    "Saldo da carteira - Cartão de crédito total": extracao_bcb(20590, '01/03/2007', '28/12/2024'),
-    "Número de Cartões de Crédito Emitidos": extracao_bcb(25147, '31/12/2010', '28/12/2024'),  # Número de cartões emitidos
-    "Número de Cartões de Crédito Ativos": extracao_bcb(25149, '31/12/2010', '28/12/2024'),  # Número de cartões ativos
-    "Valor total das transações com cartões de crédito": extracao_bcb(25229, '31/12/2010', '28/12/2024'),
-    "Taxa média de juros - Cartão de crédito total": extracao_bcb(22024, '01/03/2007', '28/12/2024'),  # Taxa de juros do cartão
+    "Valor Total das Transações com Cartões de Crédito": extracao_bcb(25229, '31/12/2010', '28/12/2024'),
+    "Inadimplência - Cartão de Crédito Rotativo": extracao_bcb(21127, '01/03/2011', '28/12/2024'),
+    "Inadimplência - Cartão de Crédito Parcelado": extracao_bcb(21128, '01/03/2011', '28/12/2024'),
+    "Inadimplência - Cartão de Crédito Total": extracao_bcb(21129, '01/03/2011', '28/12/2024'),
+    "Saldo do Crédito Rotativo": extracao_bcb(20587, '01/03/2007', '28/12/2024'),
+    "Número de Cartões de Crédito Emitidos": extracao_bcb(25147, '31/12/2010', '28/12/2024'),
+    "Número de Cartões de Crédito Ativos": extracao_bcb(25149, '31/12/2010', '28/12/2024'),
+    "Taxa média de juros - Cartão de crédito total": extracao_bcb(22024, '01/03/2007', '28/12/2024'),
+    "Saldo da Carteira - Cartão de Crédito Parcelado": extracao_bcb(20588, '01/03/2007', '28/12/2024'),
+    "Saldo da Carteira - Cartão de Crédito à Vista": extracao_bcb(20589, '01/03/2007', '28/12/2024'),
+    "Saldo da Carteira - Cartão de Crédito Total": extracao_bcb(20590, '01/03/2007', '28/12/2024')
 }
 
 # Layout do dashboard
@@ -50,20 +51,20 @@ def exibir_indicador(titulo, dados, unidade):
         st.line_chart(dados['valor'], height=250, use_container_width=True)
         st.write(dados.tail(5))  # Exibe os 5 dados mais recentes
 
-# Títulos e Unidades para cada indicador
+# Ordem lógica de indicadores
 indicadores = [
     ("Número de Cartões de Crédito Emitidos", dados["Número de Cartões de Crédito Emitidos"], "unidades (milhões)"),
     ("Número de Cartões de Crédito Ativos", dados["Número de Cartões de Crédito Ativos"], "unidades (milhões)"),
-    ("Saldo da Carteira - Cartão de Crédito à Vista", dados["Saldo da carteira - Cartão de crédito à vista"], "R$ milhões"),
-    ("Saldo da Carteira - Cartão de Crédito Parcelado", dados["Saldo da carteira - Cartão de crédito parcelado"], "R$ milhões"),
-    ("Saldo da Carteira - Cartão de Crédito Total", dados["Saldo da carteira - Cartão de crédito total"], "R$ milhões"),
-    ("Valor Total das Transações com Cartões de Crédito", dados["Valor total das transações com cartões de crédito"], "R$ milhões"),
-    ("Taxa Média de Juros - Cartão de Crédito Total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a."),
-    ("Taxa de Inadimplência (15 a 90 dias)", dados["Taxa de Inadimplência (15 a 90 dias)"], "%"),
-    ("Taxa de Inadimplência (>90 dias)", dados["Taxa de Inadimplência (>90 dias)"], "%"),
-    ("Saldo do Crédito Rotativo", dados["Saldo do Crédito Rotativo"], "R$ milhões"),
+    ("Valor Total das Transações com Cartões de Crédito", dados["Valor Total das Transações com Cartões de Crédito"], "R$ milhões"),
+    ("Saldo da Carteira - Cartão de Crédito Total", dados["Saldo da Carteira - Cartão de Crédito Total"], "R$ milhões"),
+    ("Saldo da Carteira - Cartão de Crédito à Vista", dados["Saldo da Carteira - Cartão de Crédito à Vista"], "R$ milhões"),
+    ("Saldo da Carteira - Cartão de Crédito Parcelado", dados["Saldo da Carteira - Cartão de Crédito Parcelado"], "R$ milhões"),
+    ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a."),
+    ("Inadimplência - Cartão de Crédito Total", dados["Inadimplência - Cartão de Crédito Total"], "%"),
+    ("Inadimplência - Cartão de Crédito Rotativo", dados["Inadimplência - Cartão de Crédito Rotativo"], "%"),
+    ("Inadimplência - Cartão de Crédito Parcelado", dados["Inadimplência - Cartão de Crédito Parcelado"], "%")
 ]
 
-# Exibindo indicadores
+# Exibindo indicadores na ordem lógica
 for titulo, indicador, unidade in indicadores:
     exibir_indicador(titulo, indicador, unidade)
