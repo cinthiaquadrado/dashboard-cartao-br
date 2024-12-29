@@ -30,7 +30,7 @@ dados = {
 }
 
 # Layout do dashboard
-st.title("Dashboard: Panorama do Uso de Cartões de Crédito no Brasil")
+st.title("Panorama do Uso de Cartões de Crédito no Brasil")
 
 # Texto inicial explicativo
 st.markdown("""
@@ -41,8 +41,8 @@ st.markdown("""
 """)
 
 # Filtros para interatividade (se necessário, com base nas suas preferências)
-data_inicio = st.date_input("Data de Início", pd.to_datetime('2010-01-01'))
-data_fim = st.date_input("Data de Fim", pd.to_datetime('2024-12-28'))
+# data_inicio = st.date_input("Data de Início", pd.to_datetime('2010-01-01'))
+# data_fim = st.date_input("Data de Fim", pd.to_datetime('2024-12-28'))
 
 # Função para exibir gráficos e tabelas com unidades e títulos
 def exibir_indicador(titulo, dados, unidade):
