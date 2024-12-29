@@ -30,6 +30,7 @@ dados = {
     "Saldo da Carteira - Cartão de Crédito Total": extracao_bcb(20590, '01/03/2007', '28/12/2024')
 }
 
+# Função para exibir os indicadores
 def exibir_indicador(titulo, indicador, unidade):
     # Exibe o título do indicador
     st.subheader(titulo)
@@ -39,7 +40,12 @@ def exibir_indicador(titulo, indicador, unidade):
     
     # Exibe a última linha de dados
     ultimo_valor = indicador.iloc[-1]
-    st.markdown(f"Último valor: {ultimo_valor:.2f} {unidade}")
+    
+    if pd.isna(ultimo_valor):
+        st.markdown(f"Último valor: Não disponível ({unidade})")
+    else:
+        st.markdown(f"Último valor: {ultimo_valor:.2f} {unidade}")
+
     
 # Layout do dashboard
 st.title("📊 Panorama do Uso de Cartões de Crédito no Brasil")
