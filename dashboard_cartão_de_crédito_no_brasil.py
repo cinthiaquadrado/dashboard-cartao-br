@@ -5,17 +5,33 @@ import matplotlib.pyplot as plt
 
 # Função para extrair dados do Banco Central
 def extracao_bcb(codigo, data_inicio, data_fim):
-    url = f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados?formato=json&dataInicial={data_inicio}&dataFinal={data_fim}'
-    df = pd.read_json(url)
-    df.set_index('data', inplace=True)
-    df.index = pd.to_datetime(df.index, dayfirst=True)
-    return df
+    try:
+        url = f'https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados?formato=json&dataInicial={data_inicio}&dataFinal={data_fim}'
+        df = pd.read_json(url)
+        df.set_index('data', inplace=True)
+        df.index = pd.to_datetime(df.index, dayfirst=True)
+        return df
+    except Exception as e:
+        st.error(f"Erro ao carregar dados do código {codigo}: {e}")
+        return pd.DataFrame(columns=['data', 'valor']).set_index('data')
 
 # Extração dos dados
-saldo_cartao_rotativo = extracao_bcb(20587, '01/01/2010', '31/10/2024')  # Saldo do crédito rotativo - PF
-juros_medio = extracao_bcb(22699, '01/01/2010', '31/10/2024')  # Juros médios - Cartão de crédito
-inadimplencia = extracao_bcb(20753, '01/01/2010', '31/10/2024')  # Taxa de inadimplência - PF
-volume_operacoes = extracao_bcb(20592, '01/01/2010', '31/10/2024')  # Volume de operações - PF
+dados = {
+    "Saldo do Crédito Rotativo": extracao_bcb(20587, '01/01/2010', '31/10/2024'),  # Saldo do crédito rotativo - PF
+    "Juros Médios": extracao_bcb(22699, '01/01/2010', '31/10/2024'),  # Juros médios - Cartão de crédito
+    "Taxa de Inadimplência (15 a 90 dias)": extracao_bcb(20754, '01/01/2010', '31/10/2024'),  # Inadimplência (15 a 90 dias)
+    "Taxa de Inadimplência (>90 dias)": extracao_bcb(20753, '01/01/2010', '31/10/2024'),  # Inadimplência (>90 dias)
+    "Volume de Operações": extracao_bcb(20592, '01/01/2010', '31/10/2024'),  # Volume de operações - PF
+    "Concessões Pré-Fixadas": extracao_bcb(22356, '01/01/2010', '31/10/2024'),
+    "Concessões Pós-Fixadas": extracao_bcb(22357, '01/01/2010', '31/10/2024'),
+    "Concessões Flutuantes": extracao_bcb(22358, '01/01/2010', '31/10/2024'),
+    "Saldos Consolidados no Mês": extracao_bcb(22359, '01/01/2010', '31/10/2024'),
+    "Concessões Consolidadas no Mês": extracao_bcb(22360, '01/01/2010', '31/10/2024'),
+    "Carteira de Crédito Rotativo": extracao_bcb(20588, '01/01/2010', '31/10/2024'),
+    "Carteira de Crédito Parcelado": extracao_bcb(20589, '01/01/2010', '31/10/2024'),
+    "Carteira de Crédito à Vista": extracao_bcb(20590, '01/01/2010', '31/10/2024'),
+    "Prazo Médio das Operações": extracao_bcb(22361, '01/01/2010', '31/10/2024'),
+}
 
 # Configuração do Streamlit
 st.set_page_config(page_title="Dashboard - Mercado de Crédito no Brasil", layout="wide")
@@ -31,43 +47,37 @@ data_fim = st.sidebar.date_input("Data Final", value=pd.Timestamp('2024-10-31'))
 
 # Aplicar filtro
 filtered_data = {
-    "Saldo do Crédito Rotativo": saldo_cartao_rotativo[(saldo_cartao_rotativo.index >= pd.Timestamp(data_inicio)) & (saldo_cartao_rotativo.index <= pd.Timestamp(data_fim))],
-    "Juros Médios": juros_medio[(juros_medio.index >= pd.Timestamp(data_inicio)) & (juros_medio.index <= pd.Timestamp(data_fim))],
-    "Taxa de Inadimplência": inadimplencia[(inadimplencia.index >= pd.Timestamp(data_inicio)) & (inadimplencia.index <= pd.Timestamp(data_fim))],
-    "Volume de Operações": volume_operacoes[(volume_operacoes.index >= pd.Timestamp(data_inicio)) & (volume_operacoes.index <= pd.Timestamp(data_fim))],
+    key: df[(df.index >= pd.Timestamp(data_inicio)) & (df.index <= pd.Timestamp(data_fim))]
+    for key, df in dados.items()
 }
 
 # Layout do dashboard
-col1, col2 = st.columns(2)
+tab1, tab2, tab3 = st.tabs(["Indicadores Gerais", "Concessões e Saldos", "Carteiras e Prazo Médio"])
 
-# Saldo do Crédito Rotativo
-col1.subheader("Saldo do Crédito Rotativo (PF)")
-col1.line_chart(filtered_data["Saldo do Crédito Rotativo"]["valor"])
+# Indicadores Gerais
+with tab1:
+    st.subheader("Indicadores Gerais")
+    st.line_chart(filtered_data["Saldo do Crédito Rotativo"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Juros Médios"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Taxa de Inadimplência (15 a 90 dias)"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Taxa de Inadimplência (>90 dias)"]["valor"], height=250, use_container_width=True)
 
-# Juros Médios
-col2.subheader("Juros Médios do Crédito Rotativo")
-col2.line_chart(filtered_data["Juros Médios"]["valor"])
+# Concessões e Saldos
+with tab2:
+    st.subheader("Concessões e Saldos")
+    st.line_chart(filtered_data["Concessões Pré-Fixadas"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Concessões Pós-Fixadas"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Concessões Flutuantes"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Saldos Consolidados no Mês"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Concessões Consolidadas no Mês"]["valor"], height=250, use_container_width=True)
 
-# Taxa de Inadimplência
-col1.subheader("Taxa de Inadimplência (PF)")
-col1.line_chart(filtered_data["Taxa de Inadimplência"]["valor"])
-
-# Volume de Operações
-col2.subheader("Volume de Operações (PF)")
-col2.line_chart(filtered_data["Volume de Operações"]["valor"])
-
-# Análise Resumida
-st.header("📈 Análise Resumida")
-saldo_atual = filtered_data["Saldo do Crédito Rotativo"]["valor"].iloc[-1]
-juros_atual = filtered_data["Juros Médios"]["valor"].iloc[-1]
-inadimplencia_atual = filtered_data["Taxa de Inadimplência"]["valor"].iloc[-1]
-volume_atual = filtered_data["Volume de Operações"]["valor"].iloc[-1]
-
-st.write(f"**Saldo Atual (R$):** {saldo_atual:,.2f}")
-st.write(f"**Juros Médios (%):** {juros_atual:.2f}")
-st.write(f"**Taxa de Inadimplência (%):** {inadimplencia_atual:.2f}")
-st.write(f"**Volume de Operações (R$):** {volume_atual:,.2f}")
+# Carteiras e Prazo Médio
+with tab3:
+    st.subheader("Carteiras de Crédito e Prazo Médio")
+    st.line_chart(filtered_data["Carteira de Crédito Rotativo"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Carteira de Crédito Parcelado"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Carteira de Crédito à Vista"]["valor"], height=250, use_container_width=True)
+    st.line_chart(filtered_data["Prazo Médio das Operações"]["valor"], height=250, use_container_width=True)
 
 # Conclusão
 st.write("Este dashboard apresenta uma visão geral do mercado de crédito no Brasil, permitindo a análise de tendências e correlações entre os principais indicadores econômicos relacionados ao crédito.")
-
