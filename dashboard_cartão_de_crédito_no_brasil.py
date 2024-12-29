@@ -30,7 +30,7 @@ dados = {
 }
 
 # Layout do dashboard
-st.title("Panorama do Uso de Cartões de Crédito no Brasil")
+st.title("📉 Panorama do Uso de Cartões de Crédito no Brasil")
 
 # Texto inicial explicativo
 st.markdown("""
@@ -68,20 +68,17 @@ indicadores = [
     ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
 ]
 
-# Exibindo indicadores
-for titulo, indicador, unidade in indicadores:
-    exibir_indicador(titulo, indicador, unidade)
-
-# Resumo final
-st.markdown("## Resumo Final")
-st.write("""
-    O painel proporciona uma visão abrangente do uso de cartões de crédito no Brasil, destacando os principais 
-    indicadores relacionados ao crédito rotativo, inadimplência, tipos de crédito (parcelado e à vista) e transações realizadas. 
-    Esses dados permitem avaliar o panorama do crédito e as condições do mercado, proporcionando insights valiosos sobre os comportamentos 
-    de consumo e os desafios enfrentados pelos consumidores brasileiros.
-""")
-
-# Exibir dados mais atuais (últimos valores)
+# Exibindo indicadores com bullet points e ícones
 st.markdown("### Dados Mais Recentes")
 for titulo, indicador, unidade in indicadores:
-    st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-1]:.2f} {unidade}")
+    valor = indicador['valor'].iloc[-1]
+    if unidade == "%":
+        emoji = "📉"
+    elif unidade == "R$ milhões":
+        emoji = "💰"
+    elif unidade == "unidades (milhões)":
+        emoji = "💳"
+    else:
+        emoji = "📊"
+    
+    st.markdown(f"• **{emoji} {titulo}:** {valor:.2f} {unidade}")
