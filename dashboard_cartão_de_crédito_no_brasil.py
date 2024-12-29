@@ -50,7 +50,6 @@ def exibir_indicador(titulo, indicador, unidade):
     else:
         st.markdown(f"Dados não disponíveis para {titulo} ({unidade})")
 
-
 # Layout do dashboard
 st.title("📊 Panorama do Uso de Cartões de Crédito no Brasil")
 
