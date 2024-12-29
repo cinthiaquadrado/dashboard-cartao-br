@@ -32,27 +32,37 @@ dados = {
 # Layout do dashboard
 st.title("📊 Panorama do Uso de Cartões de Crédito no Brasil")
 
-# Texto inicial explicativo
+# Texto explicativo
 st.markdown("""
     Este dashboard apresenta uma análise sobre o uso de cartões de crédito por pessoas físicas no Brasil, 
     com o objetivo de fornecer informações atualizadas sobre a evolução do crédito rotativo, inadimplência, 
-    as carteiras de crédito e as operações realizadas. Ele permite entender os principais indicadores do mercado de 
-    crédito, auxiliando na análise de tendências e na tomada de decisões estratégicas.
+    as carteiras de crédito e as operações realizadas.
 """)
 
-# Filtros para interatividade (se necessário, com base nas suas preferências)
-# data_inicio = st.date_input("Data de Início", pd.to_datetime('2010-01-01'))
-# data_fim = st.date_input("Data de Fim", pd.to_datetime('2024-12-28'))
+# Filtro lateral para selecionar o nome da tabela
+tabela_selecionada = st.sidebar.selectbox("Selecione um Indicador", list(dados.keys()))
 
-# Função para exibir gráficos e tabelas com unidades e títulos
-def exibir_indicador(titulo, dados, unidade):
+# Filtro de período para gráficos
+data_inicio = st.sidebar.date_input("Data de Início", min_value=dados[tabela_selecionada].index.min(), max_value=dados[tabela_selecionada].index.max(), value=dados[tabela_selecionada].index.min())
+data_fim = st.sidebar.date_input("Data de Fim", min_value=dados[tabela_selecionada].index.min(), max_value=dados[tabela_selecionada].index.max(), value=dados[tabela_selecionada].index.max())
+
+# Função para exibir gráfico e tabela com últimos 5 registros
+def exibir_indicador(titulo, dados, unidade, data_inicio, data_fim):
+    # Filtrando os dados de acordo com o período
+    dados_filtrados = dados[(dados.index >= pd.to_datetime(data_inicio)) & (dados.index <= pd.to_datetime(data_fim))]
+    
     st.subheader(titulo)
     st.markdown(f"**Unidade:** {unidade}")
-    if dados.empty:
-        st.warning(f"Não há dados disponíveis para o indicador: {titulo}")
+    
+    if dados_filtrados.empty:
+        st.warning(f"Não há dados disponíveis para o indicador: {titulo} no período selecionado.")
     else:
-        st.line_chart(dados['valor'], height=250, use_container_width=True)
-        st.write(dados.head())
+        # Exibir gráfico
+        st.line_chart(dados_filtrados['valor'], height=250, use_container_width=True)
+        
+        # Exibir últimos 5 registros
+        st.markdown("### Últimos 5 Registros")
+        st.write(dados_filtrados.tail(5))
 
 # Títulos e Unidades para cada indicador
 indicadores = [
@@ -68,20 +78,12 @@ indicadores = [
     ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
 ]
 
-# Exibindo indicadores
-for titulo, indicador, unidade in indicadores:
-    exibir_indicador(titulo, indicador, unidade)
+# Exibir o gráfico e a tabela do indicador selecionado
+indicador_selecionado = dados[tabela_selecionada]
+unidade_selecionada = dict(indicadores)[tabela_selecionada]
 
-# Resumo final
-# st.markdown("## Resumo Final")
-# st.write("""
-#     O painel proporciona uma visão abrangente do uso de cartões de crédito no Brasil, destacando os principais 
-#     indicadores relacionados ao crédito rotativo, inadimplência, tipos de crédito (parcelado e à vista) e transações realizadas. 
-#     Esses dados permitem avaliar o panorama do crédito e as condições do mercado, proporcionando insights valiosos sobre os comportamentos 
-#     de consumo e os desafios enfrentados pelos consumidores brasileiros.
-# """)
+exibir_indicador(tabela_selecionada, indicador_selecionado, unidade_selecionada, data_inicio, data_fim)
 
-# Exibir dados mais atuais (últimos valores)
+# Exibir dados mais recentes
 st.markdown("### Dados Mais Recentes")
-for titulo, indicador, unidade in indicadores:
-    st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-1]:.2f} {unidade}")
+st.markdown(f"**{tabela_selecionada}**: {indicador_selecionado['valor'].iloc[-1]:.2f} {unidade_selecionada}")
