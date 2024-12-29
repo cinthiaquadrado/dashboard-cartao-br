@@ -65,7 +65,7 @@ indicadores = [
     ("Número de Cartões de Crédito Emitidos", dados["Número de Cartões de Crédito Emitidos"], "unidades (milhões)"),
     ("Número de Cartões de Crédito Ativos", dados["Número de Cartões de Crédito Ativos"], "unidades (milhões)"),
     ("Valor Total das Transações com Cartões de Crédito", dados["Valor total das transações com cartões de crédito"], "R$ milhões"),
-    ("Taxa média de juros - Cartão de crédito total", dados["Taxa de Juros do Cartão de Crédito"], "% a.a.")
+    ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
 ]
 
 # Exibindo indicadores
