@@ -52,16 +52,16 @@ def exibir_indicador(titulo, dados, unidade):
 
 # Títulos e Unidades para cada indicador
 indicadores = [
-    ("Saldo do Crédito Rotativo", dados["Saldo do Crédito Rotativo"], "R$ milhões"),
-    ("Taxa de Inadimplência (15 a 90 dias)", dados["Taxa de Inadimplência (15 a 90 dias)"], "%"),
-    ("Taxa de Inadimplência (>90 dias)", dados["Taxa de Inadimplência (>90 dias)"], "%"),
-    ("Saldo da Carteira - Cartão de Crédito Parcelado", dados["Saldo da carteira - Cartão de crédito parcelado"], "R$ milhões"),
-    ("Saldo da Carteira - Cartão de Crédito à Vista", dados["Saldo da carteira - Cartão de crédito à vista"], "R$ milhões"),
-    ("Saldo da Carteira - Cartão de Crédito Total", dados["Saldo da carteira - Cartão de crédito total"], "R$ milhões"),
     ("Número de Cartões de Crédito Emitidos", dados["Número de Cartões de Crédito Emitidos"], "unidades (milhões)"),
     ("Número de Cartões de Crédito Ativos", dados["Número de Cartões de Crédito Ativos"], "unidades (milhões)"),
+    ("Saldo da Carteira - Cartão de Crédito à Vista", dados["Saldo da carteira - Cartão de crédito à vista"], "R$ milhões"),
+    ("Saldo da Carteira - Cartão de Crédito Parcelado", dados["Saldo da carteira - Cartão de crédito parcelado"], "R$ milhões"),
+    ("Saldo da Carteira - Cartão de Crédito Total", dados["Saldo da carteira - Cartão de crédito total"], "R$ milhões"),
     ("Valor Total das Transações com Cartões de Crédito", dados["Valor total das transações com cartões de crédito"], "R$ milhões"),
-    ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
+    ("Taxa Média de Juros - Cartão de Crédito Total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a."),
+    ("Taxa de Inadimplência (15 a 90 dias)", dados["Taxa de Inadimplência (15 a 90 dias)"], "%"),
+    ("Taxa de Inadimplência (>90 dias)", dados["Taxa de Inadimplência (>90 dias)"], "%"),
+    ("Saldo do Crédito Rotativo", dados["Saldo do Crédito Rotativo"], "R$ milhões"),
 ]
 
 # Exibindo indicadores
