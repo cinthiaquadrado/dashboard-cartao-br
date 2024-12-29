@@ -15,27 +15,6 @@ def extracao_bcb(codigo, data_inicio, data_fim):
         st.error(f"Erro ao carregar dados do código {codigo}: {e}")
         return pd.DataFrame(columns=['data', 'valor']).set_index('data')
 
-# Definir filtros para a barra lateral
-st.sidebar.header("Filtros de Visualização")
-
-# Filtro de seleção de indicadores
-indicador_selecionado = st.sidebar.selectbox(
-    "Selecione o Indicador",
-    ["Saldo do Crédito Rotativo", "Taxa de Inadimplência (15 a 90 dias)", "Taxa de Inadimplência (>90 dias)",
-     "Saldo da carteira - Cartão de crédito parcelado", "Saldo da carteira - Cartão de crédito à vista",
-     "Saldo da carteira - Cartão de crédito total", "Número de Cartões de Crédito Emitidos",
-     "Número de Cartões de Crédito Ativos", "Valor total das transações com cartões de crédito",
-     "Taxa de Juros do Cartão de Crédito"]
-)
-
-# Filtro de intervalo de datas
-data_inicio = st.sidebar.date_input("Data de Início", pd.to_datetime("2020-01-01"))
-data_fim = st.sidebar.date_input("Data de Fim", pd.to_datetime("2024-12-28"))
-
-# Função para filtrar dados com base nas datas selecionadas
-def filtrar_dados(df, data_inicio, data_fim):
-    return df[(df.index >= data_inicio) & (df.index <= data_fim)]
-
 # Extração dos dados
 dados = {
     "Saldo do Crédito Rotativo": extracao_bcb(20587, '01/03/2007', '28/12/2024'),  # Saldo do crédito rotativo - PF
@@ -49,10 +28,6 @@ dados = {
     "Valor total das transações com cartões de crédito": extracao_bcb(25229, '31/12/2010', '28/12/2024'),
     "Taxa de Juros do Cartão de Crédito": extracao_bcb(20751, '01/03/2007', '28/12/2024'),  # Taxa de juros do cartão
 }
-
-# Filtragem de dados com base na seleção do indicador e intervalo de datas
-df_selecionado = dados[indicador_selecionado]
-df_filtrado = filtrar_dados(df_selecionado, data_inicio, data_fim)
 
 # Layout do dashboard
 tab1, tab2, tab3, tab4 = st.tabs(["Indicadores Gerais", "Carteiras de Crédito", "Operações de Cartão", "Conclusão"])
@@ -69,20 +44,67 @@ st.markdown("""
 # Indicadores Gerais
 with tab1:
     st.subheader("Indicadores Gerais")
-    st.markdown(f"**{indicador_selecionado} (em R$ ou %)**")
-    st.line_chart(df_filtrado["valor"], height=250, use_container_width=True)
+    st.markdown("""
+        **1. Saldo do Crédito Rotativo (em R$)**
+        Este indicador mostra o saldo total da utilização do crédito rotativo em cartões de crédito por pessoas físicas no Brasil.
+    """)
+    if "Saldo do Crédito Rotativo" in dados:
+        st.line_chart(dados["Saldo do Crédito Rotativo"]["valor"], height=250, use_container_width=True)
+
+    st.markdown("""
+        **2. Taxa de Inadimplência (15 a 90 dias)**
+        A taxa de inadimplência é a porcentagem de crédito que está em atraso de 15 a 90 dias.
+    """)
+    if "Taxa de Inadimplência (15 a 90 dias)" in dados:
+        st.line_chart(dados["Taxa de Inadimplência (15 a 90 dias)"]["valor"], height=250, use_container_width=True)
+
+    st.markdown("""
+        **3. Taxa de Inadimplência (>90 dias)**
+        A taxa de inadimplência superior a 90 dias indica o percentual de crédito vencido por mais de 90 dias.
+    """)
+    if "Taxa de Inadimplência (>90 dias)" in dados:
+        st.line_chart(dados["Taxa de Inadimplência (>90 dias)"]["valor"], height=250, use_container_width=True)
 
 # Carteiras de Crédito
 with tab2:
     st.subheader("Carteiras de Crédito")
-    st.markdown(f"**{indicador_selecionado} (em R$ ou %)**")
-    st.line_chart(df_filtrado["valor"], height=250, use_container_width=True)
+    st.markdown("""
+        **1. Saldo da Carteira - Cartão de Crédito Parcelado (em R$)**
+        Este indicador mostra o saldo da carteira de crédito relacionada ao pagamento parcelado dos cartões de crédito.
+    """)
+    if "Saldo da carteira - Cartão de crédito parcelado" in dados:
+        st.line_chart(dados["Saldo da carteira - Cartão de crédito parcelado"]["valor"], height=250, use_container_width=True)
+
+    st.markdown("""
+        **2. Saldo da Carteira - Cartão de Crédito à Vista (em R$)**
+        Refere-se ao saldo da carteira de crédito para transações realizadas à vista com o cartão de crédito.
+    """)
+    if "Saldo da carteira - Cartão de crédito à vista" in dados:
+        st.line_chart(dados["Saldo da carteira - Cartão de crédito à vista"]["valor"], height=250, use_container_width=True)
+
+    st.markdown("""
+        **3. Saldo da Carteira - Cartão de Crédito Total (em R$)**
+        Este indicador soma o saldo total da carteira de crédito dos cartões de crédito, considerando tanto as transações à vista quanto as parceladas.
+    """)
+    if "Saldo da carteira - Cartão de crédito total" in dados:
+        st.line_chart(dados["Saldo da carteira - Cartão de crédito total"]["valor"], height=250, use_container_width=True)
 
 # Operações de Cartão de Crédito
 with tab3:
     st.subheader("Operações de Cartão de Crédito")
-    st.markdown(f"**{indicador_selecionado} (em R$ ou %)**")
-    st.line_chart(df_filtrado["valor"], height=250, use_container_width=True)
+    st.markdown("""
+        **1. Valor Total das Transações com Cartões de Crédito (em R$)**
+        Mostra o valor total movimentado nas transações realizadas com cartões de crédito em determinado período.
+    """)
+    if "Valor total das transações com cartões de crédito" in dados:
+        st.line_chart(dados["Valor total das transações com cartões de crédito"]["valor"], height=250, use_container_width=True)
+
+    st.markdown("""
+        **2. Taxa de Juros do Cartão de Crédito (%)**
+        A taxa de juros média aplicada nas transações de cartão de crédito no Brasil, afetando tanto as compras à vista quanto parceladas.
+    """)
+    if "Taxa de Juros do Cartão de Crédito" in dados:
+        st.line_chart(dados["Taxa de Juros do Cartão de Crédito"]["valor"], height=250, use_container_width=True)
 
 # Conclusão
 with tab4:
