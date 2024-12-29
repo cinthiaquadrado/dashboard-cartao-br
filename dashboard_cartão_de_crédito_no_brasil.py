@@ -40,13 +40,6 @@ st.markdown("""
     crédito, auxiliando na análise de tendências e na tomada de decisões estratégicas.
 """)
 
-# Filtros para interação do usuário
-# Seletor de tabela
-tabela_selecionada = st.selectbox(
-    "Escolha o indicador para visualização",
-    list(dados.keys())
-)
-
 # Função para exibir gráficos e tabelas com unidades e títulos
 def exibir_indicador(titulo, dados, unidade):
     st.subheader(titulo)
@@ -55,7 +48,7 @@ def exibir_indicador(titulo, dados, unidade):
         st.warning(f"Não há dados disponíveis para o indicador: {titulo}")
     else:
         st.line_chart(dados['valor'], height=250, use_container_width=True)
-        st.write(dados.head())
+        st.write(dados.tail(5))  # Exibe os 5 dados mais recentes
 
 # Títulos e Unidades para cada indicador
 indicadores = [
@@ -71,13 +64,11 @@ indicadores = [
     ("Taxa média de juros - Cartão de crédito total", dados["Taxa média de juros - Cartão de crédito total"], "% a.a.")
 ]
 
-# Exibir o gráfico do indicador selecionado
+# Exibindo indicadores
 for titulo, indicador, unidade in indicadores:
-    if titulo == tabela_selecionada:
-        exibir_indicador(titulo, indicador, unidade)
+    exibir_indicador(titulo, indicador, unidade)
 
-# Exibir dados mais atuais (últimos valores)
+# Exibir os 5 dados mais recentes
 st.markdown("### Dados Mais Recentes")
 for titulo, indicador, unidade in indicadores:
-    if titulo == tabela_selecionada:
-        st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-1]:.2f} {unidade}")
+    st.markdown(f"**{titulo}**: {indicador['valor'].iloc[-5:].to_list()} {unidade}")
